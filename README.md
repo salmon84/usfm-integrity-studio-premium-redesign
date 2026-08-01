@@ -94,7 +94,7 @@ uploading a project.
 
 ## License and branding
 
-Source code is licensed under `AGPL-3.0-or-later`; see `Premium/LICENSE` and
+Source code is licensed under `AGPL-3.0-or-later`; see `LICENSE` and
 `Premium/NOTICE`.
 
 The code license does not grant trademark rights. See
