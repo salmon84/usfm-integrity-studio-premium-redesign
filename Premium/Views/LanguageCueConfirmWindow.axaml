@@ -1,0 +1,82 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="using:UsfmIntegrityStudio.Views"
+        x:Class="UsfmIntegrityStudio.Views.LanguageCueConfirmWindow"
+        Width="860"
+        Height="620"
+        MinWidth="780"
+        MinHeight="520"
+        CanResize="True"
+        WindowStartupLocation="CenterOwner"
+        Title="Confirm Language Cues">
+
+    <Border Background="#F8FBFF" Padding="16">
+        <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" RowSpacing="10">
+            <TextBlock Text="Confirm Language And Book Cues"
+                       FontSize="22"
+                       FontWeight="Bold"
+                       Foreground="#1E3A8A"/>
+
+            <TextBlock Grid.Row="1"
+                       x:Name="SummaryText"
+                       TextWrapping="Wrap"
+                       Foreground="#0F172A"
+                       FontWeight="SemiBold"/>
+
+            <Border Grid.Row="2"
+                    BorderThickness="1"
+                    BorderBrush="#D6DEF4"
+                    Background="White"
+                    CornerRadius="8"
+                    Padding="10"
+                    MaxHeight="130">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <TextBlock x:Name="DetailText" TextWrapping="Wrap" Foreground="#1E293B"/>
+                </ScrollViewer>
+            </Border>
+
+            <Border Grid.Row="3" BorderThickness="1" BorderBrush="#D6DEF4" Background="#FFFFFF" CornerRadius="8" Padding="10">
+                <Grid RowDefinitions="Auto,Auto,*" RowSpacing="8">
+                    <TextBlock Text="Optional Mapping Override"
+                               FontWeight="Bold"
+                               Foreground="#1E3A8A"/>
+                    <TextBlock Grid.Row="1"
+                               Text="If the detected mapping is wrong, choose the correct book below before continuing. Type in the dropdown to jump to a book by name."
+                               TextWrapping="Wrap"
+                               Foreground="#475569"/>
+                    <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <ItemsControl x:Name="OverrideItems">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="views:LanguageCueOverrideRow">
+                                    <Grid ColumnDefinitions="2*,2*" ColumnSpacing="10" Margin="0,4,0,4">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Title}" FontWeight="SemiBold" Foreground="#0F172A" TextWrapping="Wrap"/>
+                                            <TextBlock Text="{Binding CurrentLabel}" FontSize="11" Foreground="#64748B" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <ComboBox Grid.Column="1"
+                                                  MinWidth="180"
+                                                  HorizontalAlignment="Stretch"
+                                                  ItemsSource="{Binding Choices}"
+                                                  SelectedItem="{Binding SelectedChoice}"
+                                                  IsTextSearchEnabled="True">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate x:DataType="views:LanguageCueBookChoice">
+                                                    <TextBlock Text="{Binding Label}" TextWrapping="Wrap"/>
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+
+            <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                <Button Content="No, Stop" Click="Reject_Click"/>
+                <Button Content="Yes, Continue" Click="Confirm_Click" Background="#2563EB" Foreground="White" BorderBrush="#1D4ED8"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

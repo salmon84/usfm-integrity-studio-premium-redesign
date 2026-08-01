@@ -1,0 +1,473 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:UsfmIntegrityStudio.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1360" d:DesignHeight="900"
+        x:Class="UsfmIntegrityStudio.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="USFM Integrity Studio Premium - Redesign"
+        MinWidth="1160"
+        MinHeight="760"
+        Width="1360"
+        Height="900"
+        Background="#F2EFE7">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Window.Resources>
+        <SolidColorBrush x:Key="Paper" Color="#F2EFE7"/>
+        <SolidColorBrush x:Key="Surface" Color="#FFFEFA"/>
+        <SolidColorBrush x:Key="SurfaceMuted" Color="#E9E5DB"/>
+        <SolidColorBrush x:Key="Ink" Color="#17231F"/>
+        <SolidColorBrush x:Key="InkSoft" Color="#59635F"/>
+        <SolidColorBrush x:Key="Forest" Color="#164E43"/>
+        <SolidColorBrush x:Key="ForestBright" Color="#1E7564"/>
+        <SolidColorBrush x:Key="Amber" Color="#D9822B"/>
+        <SolidColorBrush x:Key="AmberSoft" Color="#FFF0D8"/>
+        <SolidColorBrush x:Key="Line" Color="#D8D4C9"/>
+        <SolidColorBrush x:Key="SuccessSoft" Color="#E0F1E8"/>
+        <SolidColorBrush x:Key="ActionBlue" Color="#2563B8"/>
+        <SolidColorBrush x:Key="ActionAmber" Color="#C56A14"/>
+        <SolidColorBrush x:Key="ActionTeal" Color="#08766C"/>
+    </Window.Resources>
+
+    <Window.Styles>
+        <Style Selector="Border.card">
+            <Setter Property="Background" Value="{StaticResource Surface}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Line}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="Padding" Value="18"/>
+        </Style>
+        <Style Selector="TextBlock.sectionTitle">
+            <Setter Property="FontFamily" Value="Georgia"/>
+            <Setter Property="FontSize" Value="21"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="{StaticResource Ink}"/>
+        </Style>
+        <Style Selector="TextBlock.eyebrow">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="{StaticResource ForestBright}"/>
+            <Setter Property="LetterSpacing" Value="1.2"/>
+        </Style>
+        <Style Selector="TextBlock.label">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{StaticResource Ink}"/>
+        </Style>
+        <Style Selector="TextBlock.hint">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Foreground" Value="{StaticResource InkSoft}"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+        <Style Selector="Button">
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="13,9"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="{StaticResource ForestBright}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Forest}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="MinHeight" Value="46"/>
+        </Style>
+        <Style Selector="Button.secondary">
+            <Setter Property="Background" Value="{StaticResource SurfaceMuted}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Line}"/>
+            <Setter Property="Foreground" Value="{StaticResource Ink}"/>
+        </Style>
+        <Style Selector="Button.sourceChoice">
+            <Setter Property="Background" Value="#EAF3FF"/>
+            <Setter Property="BorderBrush" Value="#6F9ACB"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="Foreground" Value="#173D69"/>
+            <Setter Property="MinHeight" Value="48"/>
+        </Style>
+        <Style Selector="Button.sourceChoice:pointerover">
+            <Setter Property="Background" Value="#D8E9FC"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ActionBlue}"/>
+        </Style>
+        <Style Selector="Button.sourceChoice:pressed">
+            <Setter Property="Background" Value="#C5DDF7"/>
+        </Style>
+        <Style Selector="Button.actionScan">
+            <Setter Property="Background" Value="{StaticResource ActionBlue}"/>
+            <Setter Property="BorderBrush" Value="#174A8C"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="MinHeight" Value="48"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
+        <Style Selector="Button.actionScan:pointerover">
+            <Setter Property="Background" Value="#1B529E"/>
+        </Style>
+        <Style Selector="Button.actionScan:disabled">
+            <Setter Property="Background" Value="#E6EFFA"/>
+            <Setter Property="BorderBrush" Value="#AFC6E4"/>
+            <Setter Property="Foreground" Value="#53739B"/>
+            <Setter Property="Opacity" Value="1"/>
+        </Style>
+        <Style Selector="Button.actionStandardize">
+            <Setter Property="Background" Value="{StaticResource ActionAmber}"/>
+            <Setter Property="BorderBrush" Value="#9C4C08"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="MinHeight" Value="48"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
+        <Style Selector="Button.actionStandardize:pointerover">
+            <Setter Property="Background" Value="#A9540C"/>
+        </Style>
+        <Style Selector="Button.actionStandardize:disabled">
+            <Setter Property="Background" Value="#FFF0D8"/>
+            <Setter Property="BorderBrush" Value="#E8BD83"/>
+            <Setter Property="Foreground" Value="#95612A"/>
+            <Setter Property="Opacity" Value="1"/>
+        </Style>
+        <Style Selector="Button.actionConvert">
+            <Setter Property="Background" Value="{StaticResource ActionTeal}"/>
+            <Setter Property="BorderBrush" Value="#045D55"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="MinHeight" Value="48"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
+        <Style Selector="Button.actionConvert:pointerover">
+            <Setter Property="Background" Value="#056359"/>
+        </Style>
+        <Style Selector="Button.actionConvert:disabled">
+            <Setter Property="Background" Value="#DDEFEA"/>
+            <Setter Property="BorderBrush" Value="#9CCBC0"/>
+            <Setter Property="Foreground" Value="#40786F"/>
+            <Setter Property="Opacity" Value="1"/>
+        </Style>
+        <Style Selector="Button.cleaner">
+            <Setter Property="Background" Value="{StaticResource SuccessSoft}"/>
+            <Setter Property="BorderBrush" Value="#8ABCA4"/>
+            <Setter Property="Foreground" Value="{StaticResource Forest}"/>
+            <Setter Property="MinHeight" Value="44"/>
+        </Style>
+        <Style Selector="TextBox.pathBox">
+            <Setter Property="Background" Value="#F8F6F0"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Line}"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="12,10"/>
+        </Style>
+        <Style Selector="ComboBox">
+            <Setter Property="MinHeight" Value="38"/>
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <Border Grid.Row="0" Background="{StaticResource Forest}" Padding="22,14">
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="16">
+                <Button Width="64" Height="64" Background="Transparent" BorderThickness="0" Padding="0"
+                        VerticalAlignment="Center" ToolTip.Tip="Open Digital Global Village website"
+                        Click="OpenWebsite_Click">
+                    <Border Width="60" Height="60" Background="#050706" CornerRadius="30" Padding="3" ClipToBounds="True">
+                        <Image Source="/Assets/dgv-logo.png" Stretch="UniformToFill"/>
+                    </Border>
+                </Button>
+
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                    <TextBlock Text="USFM Integrity Studio" FontFamily="Georgia" FontSize="27" FontWeight="Bold" Foreground="White"/>
+                    <TextBlock Text="A careful workspace for scripture conversion and repair" Foreground="#CFE5DC"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                    <Border Background="#28695D" CornerRadius="16" Padding="12,6">
+                        <TextBlock Text="PREMIUM" Foreground="White" FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
+                    </Border>
+                    <Border Background="{StaticResource AmberSoft}" CornerRadius="16" Padding="12,6">
+                        <TextBlock Text="REDESIGN LAB" Foreground="#74400E" FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <Grid Margin="20" ColumnDefinitions="210,*,330" RowDefinitions="Auto,Auto" ColumnSpacing="14" RowSpacing="14">
+                <Border Grid.Column="0" Grid.RowSpan="2" Classes="card" Background="#E8E3D7" VerticalAlignment="Stretch">
+                    <StackPanel Spacing="18">
+                        <StackPanel Spacing="4">
+                            <TextBlock Classes="eyebrow" Text="Workflow"/>
+                            <TextBlock Classes="sectionTitle" Text="One clear path" FontSize="19"/>
+                        </StackPanel>
+
+                        <Grid ColumnDefinitions="34,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="16">
+                            <Border Grid.Row="0" Width="30" Height="30" CornerRadius="15" Background="{StaticResource Forest}" HorizontalAlignment="Left">
+                                <TextBlock Text="1" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
+                            </Border>
+                            <StackPanel Grid.Row="0" Grid.Column="1" Spacing="2">
+                                <TextBlock Text="Choose source" FontWeight="Bold" Foreground="{StaticResource Ink}"/>
+                                <TextBlock Text="DOCX, folder, USFM or project" Classes="hint"/>
+                            </StackPanel>
+
+                            <Border Grid.Row="1" Width="30" Height="30" CornerRadius="15" Background="#B7B2A7" HorizontalAlignment="Left">
+                                <TextBlock Text="2" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
+                            </Border>
+                            <StackPanel Grid.Row="1" Grid.Column="1" Spacing="2">
+                                <TextBlock Text="Confirm settings" FontWeight="Bold" Foreground="{StaticResource Ink}"/>
+                                <TextBlock Text="Language, canon and compatibility" Classes="hint"/>
+                            </StackPanel>
+
+                            <Border Grid.Row="2" Width="30" Height="30" CornerRadius="15" Background="#B7B2A7" HorizontalAlignment="Left">
+                                <TextBlock Text="3" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
+                            </Border>
+                            <StackPanel Grid.Row="2" Grid.Column="1" Spacing="2">
+                                <TextBlock Text="Process" FontWeight="Bold" Foreground="{StaticResource Ink}"/>
+                                <TextBlock Text="Scan, standardize or convert" Classes="hint"/>
+                            </StackPanel>
+
+                            <Border Grid.Row="3" Width="30" Height="30" CornerRadius="15" Background="#B7B2A7" HorizontalAlignment="Left">
+                                <TextBlock Text="4" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
+                            </Border>
+                            <StackPanel Grid.Row="3" Grid.Column="1" Spacing="2">
+                                <TextBlock Text="Review" FontWeight="Bold" Foreground="{StaticResource Ink}"/>
+                                <TextBlock Text="Inspect findings and output" Classes="hint"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Border Height="1" Background="#CAC4B7"/>
+
+                        <StackPanel Spacing="8">
+                            <TextBlock Classes="eyebrow" Text="Session tools"/>
+                            <Button Content="Save TXT report" Click="SaveTxtReport_Click" Classes="secondary" HorizontalAlignment="Stretch"/>
+                            <Button Content="Save JSON report" Click="SaveJsonReport_Click" Classes="secondary" HorizontalAlignment="Stretch"/>
+                            <Button Content="Reset session" Click="ResetSession_Click" Background="{StaticResource AmberSoft}" BorderBrush="#E3AE72" Foreground="#74400E" HorizontalAlignment="Stretch"/>
+                        </StackPanel>
+
+                        <Border Background="#F6F2E8" BorderBrush="#D5CFC1" BorderThickness="1" CornerRadius="10" Padding="12">
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Output format" FontWeight="Bold" Foreground="{StaticResource Ink}"/>
+                                <TextBlock Text="{Binding OutputFormatHint}" Classes="hint"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <StackPanel Grid.Column="1" Grid.Row="0" Spacing="14">
+                    <Border Classes="card">
+                        <StackPanel Spacing="14">
+                            <StackPanel Spacing="3">
+                                <TextBlock Classes="eyebrow" Text="Source and destination"/>
+                                <TextBlock Classes="sectionTitle" Text="Prepare the workspace"/>
+                            </StackPanel>
+
+                            <StackPanel Spacing="7">
+                                <TextBlock Classes="label" Text="Input source"/>
+                                <TextBox Classes="pathBox" Text="{Binding InputDocxPath}" Watermark="Select a DOCX file, chapter folder, USFM or BTTW project..." IsReadOnly="True"/>
+                                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                                    <Button Grid.Column="0" Content="DOCX file" Click="BrowseDocx_Click" Classes="sourceChoice"/>
+                                    <Button Grid.Column="1" Content="Chapter folder" Click="BrowseDocxFolder_Click" Classes="sourceChoice"/>
+                                    <Button Grid.Column="2" Content="USFM / Project" Click="BrowseUsfmProject_Click" Classes="sourceChoice"/>
+                                </Grid>
+                                <TextBlock Text="{Binding InputSourceMode}" Foreground="{StaticResource ForestBright}" FontWeight="Bold" FontSize="11"/>
+                                <TextBlock Text="{Binding InputSourceHint}" Classes="hint"/>
+                            </StackPanel>
+
+                            <Border Height="1" Background="{StaticResource Line}"/>
+
+                            <StackPanel Spacing="7">
+                                <TextBlock Classes="label" Text="Output destination"/>
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                    <TextBox Grid.Column="0" Classes="pathBox" Text="{Binding OutputFolderPath}" Watermark="Select output folder..." IsReadOnly="True"/>
+                                    <Button Grid.Column="1" Content="Choose folder" Click="BrowseOutputFolder_Click" Classes="secondary"/>
+                                </Grid>
+                                <Grid ColumnDefinitions="*,170" ColumnSpacing="10">
+                                    <StackPanel Grid.Column="0" Spacing="5">
+                                        <TextBlock Classes="label" Text="Output set name"/>
+                                        <TextBox Text="{Binding OutputSetName}"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Spacing="5">
+                                        <TextBlock Classes="label" Text="Language code"/>
+                                        <TextBox Text="{Binding LanguageCode}" Watermark="skr / rus / urd" MaxLength="8"/>
+                                    </StackPanel>
+                                </Grid>
+                                <TextBlock Text="{Binding LanguageCodeHint}" Classes="hint"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Classes="card">
+                        <StackPanel Spacing="14">
+                            <StackPanel Spacing="3">
+                                <TextBlock Classes="eyebrow" Text="Configuration"/>
+                                <TextBlock Classes="sectionTitle" Text="Translation profile"/>
+                            </StackPanel>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                                <StackPanel Grid.Column="0" Spacing="6">
+                                    <TextBlock Classes="label" Text="Canon profile"/>
+                                    <ComboBox SelectedItem="{Binding SelectedCanon}">
+                                        <x:String>Protestant OT</x:String>
+                                        <x:String>Catholic OT</x:String>
+                                        <x:String>Orthodox OT</x:String>
+                                        <x:String>Protestant NT</x:String>
+                                        <x:String>Catholic NT</x:String>
+                                        <x:String>Orthodox NT</x:String>
+                                    </ComboBox>
+                                    <TextBlock Text="{Binding CanonHint}" Classes="hint"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Spacing="6">
+                                    <TextBlock Classes="label" Text="Output compatibility"/>
+                                    <ComboBox SelectedItem="{Binding CompatibilityProfile}">
+                                        <x:String>Paratext-compatible</x:String>
+                                        <x:String>BTTW legacy compatibility</x:String>
+                                    </ComboBox>
+                                    <TextBlock Text="{Binding CompatibilityHint}" Classes="hint"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <Expander Header="Advanced conversion controls" IsExpanded="False">
+                                <StackPanel Margin="0,12,0,0" Spacing="12">
+                                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                                        <StackPanel Grid.Column="0" Spacing="5">
+                                            <TextBlock Classes="label" Text="Parser mode"/>
+                                            <ComboBox SelectedItem="{Binding RunMode}">
+                                                <x:String>permissive</x:String>
+                                                <x:String>strict</x:String>
+                                            </ComboBox>
+                                            <TextBlock Text="{Binding ModeHint}" Classes="hint"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Spacing="5">
+                                            <CheckBox IsChecked="{Binding LimitChapters}" Content="Limit chapters per book"/>
+                                            <StackPanel Orientation="Horizontal" Spacing="8" IsEnabled="{Binding LimitChapters}">
+                                                <TextBlock Text="Maximum" VerticalAlignment="Center" Classes="label"/>
+                                                <TextBox Width="100" Text="{Binding MaxChaptersPerBook}" Watermark="1..300"/>
+                                            </StackPanel>
+                                            <TextBlock Text="{Binding ChapterCapHint}" Classes="hint"/>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <Border Background="#F4F1E9" CornerRadius="10" Padding="12">
+                                        <StackPanel Spacing="7">
+                                            <CheckBox IsChecked="{Binding InferMissingVerseMarkers}" Content="Infer missing verse markers during standardization"/>
+                                            <TextBlock Text="{Binding VerseInferenceHint}" Classes="hint" Margin="24,0,0,0"/>
+                                            <CheckBox IsChecked="{Binding PreserveDocxVerseNumbering}" Content="Preserve DOCX numbering in conversion"/>
+                                            <TextBlock Text="{Binding PreserveNumberingHint}" Classes="hint" Margin="24,0,0,0"/>
+                                            <CheckBox IsChecked="{Binding GenerateBttwProjects}" Content="Generate BTTW .tstudio project packages"/>
+                                            <TextBlock Text="{Binding BttwProjectHint}" Classes="hint" Margin="24,0,0,0"/>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </Expander>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Grid.Row="0" Spacing="14">
+                    <Border Classes="card" Background="#F8FAFC" BorderBrush="#C7D2DF">
+                        <StackPanel Spacing="13">
+                            <StackPanel Spacing="3">
+                                <TextBlock Classes="eyebrow" Text="Ready when you are" Foreground="#35658E"/>
+                                <TextBlock Text="Run workspace" FontFamily="Georgia" FontSize="22" FontWeight="Bold" Foreground="{StaticResource Ink}"/>
+                            </StackPanel>
+
+                            <Border Background="#E8F0F7" BorderBrush="#C3D2E0" BorderThickness="1" CornerRadius="10" Padding="12">
+                                <StackPanel Spacing="5">
+                                    <TextBlock Text="{Binding ScanSummary}" Foreground="#38556D" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{Binding DetectedBooksLabel}" Foreground="#173D69" FontWeight="Bold" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{Binding SelectedBooksLabel}" Foreground="#38556D" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Border>
+
+                            <TextBlock Text="{Binding StandardizationHint}" Foreground="{StaticResource InkSoft}" FontSize="11" TextWrapping="Wrap"/>
+
+                            <Button Content="1  Scan DOCX integrity" Click="ScanDocx_Click" Classes="actionScan" HorizontalAlignment="Stretch" IsEnabled="{Binding CanScan}"/>
+                            <Button Content="2  Standardize DOCX copy" Click="StandardizeDocx_Click" Classes="actionStandardize" HorizontalAlignment="Stretch"
+                                    ToolTip.Tip="Creates a standardized DOCX copy with normalized spacing/punctuation and canon highlight reporting."
+                                    IsEnabled="{Binding CanScan}"/>
+                            <Button Content="3  Convert DOCX to USFM" Click="RunConversion_Click" Classes="actionConvert" HorizontalAlignment="Stretch" IsEnabled="{Binding CanRun}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Classes="card">
+                        <StackPanel Spacing="10">
+                            <TextBlock Classes="eyebrow" Text="Existing files"/>
+                            <TextBlock Classes="sectionTitle" Text="Repair studio" FontSize="19"/>
+                            <TextBlock Text="Choose the dedicated action for the selected USFM or BTTW project file." Classes="hint"/>
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                <Button Grid.Column="0" Content="Clean USFM" Click="CleanUsfm_Click" Classes="cleaner" HorizontalAlignment="Stretch"
+                                        ToolTip.Tip="Cleans punctuation, spacing and visible verse-marker artifacts in the selected .usfm or .txt file."
+                                        IsEnabled="{Binding CanCleanUsfm}"/>
+                                <Button Grid.Column="1" Content="Clean BTTW Project" Click="CleanProject_Click" Classes="cleaner" HorizontalAlignment="Stretch"
+                                        ToolTip.Tip="Cleans the selected .tstudio project while preserving project metadata, with an optional USFM export."
+                                        IsEnabled="{Binding CanCleanProject}"/>
+                            </Grid>
+                            <TextBlock Text="Select a .usfm/.txt file for USFM cleaning or a .tstudio file for project cleaning." Classes="hint"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Classes="card" Background="{StaticResource AmberSoft}" BorderBrush="#E2B77D">
+                        <StackPanel Spacing="5">
+                            <TextBlock Text="Current output" FontWeight="Bold" Foreground="#74400E"/>
+                            <TextBlock Text="{Binding OutputTargetPreview}" Foreground="#74400E" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" ColumnDefinitions="2*,3*" ColumnSpacing="14" MinHeight="280">
+                    <Border Grid.Column="0" Classes="card">
+                        <DockPanel>
+                            <StackPanel DockPanel.Dock="Top" Spacing="3" Margin="0,0,0,10">
+                                <TextBlock Classes="eyebrow" Text="Review"/>
+                                <TextBlock Classes="sectionTitle" Text="Findings" FontSize="19"/>
+                            </StackPanel>
+                            <ListBox ItemsSource="{Binding Issues}" MinHeight="220" Background="Transparent" BorderThickness="0">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:IssueItem">
+                                        <Border BorderThickness="0,0,0,1" BorderBrush="#E5E0D5" Padding="2,8">
+                                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="9">
+                                                <Border Width="8" Height="8" CornerRadius="4" Background="{StaticResource Amber}" Margin="0,5,0,0"/>
+                                                <StackPanel Grid.Column="1" Spacing="2">
+                                                    <StackPanel Orientation="Horizontal" Spacing="7">
+                                                        <TextBlock Text="{Binding Severity}" FontWeight="Bold" Foreground="#A64B19"/>
+                                                        <TextBlock Text="{Binding Code}" FontFamily="Menlo" Foreground="#4B5551"/>
+                                                    </StackPanel>
+                                                    <TextBlock Text="{Binding Source}" FontSize="11" Foreground="#7A817E"/>
+                                                    <TextBlock Text="{Binding Message}" TextWrapping="Wrap" Foreground="{StaticResource Ink}"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </DockPanel>
+                    </Border>
+
+                    <Border Grid.Column="1" Classes="card" Background="#202A27" BorderBrush="#202A27">
+                        <DockPanel>
+                            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="0,0,0,10">
+                                <Border Width="9" Height="9" CornerRadius="5" Background="#64C3A9" VerticalAlignment="Center"/>
+                                <TextBlock Text="Activity log" FontFamily="Georgia" FontSize="19" FontWeight="Bold" Foreground="White"/>
+                            </StackPanel>
+                            <TextBox Text="{Binding ConsoleLog}"
+                                     MinHeight="220"
+                                     IsReadOnly="True"
+                                     AcceptsReturn="True"
+                                     TextWrapping="Wrap"
+                                     Background="#17201E"
+                                     Foreground="#D8E7E2"
+                                     BorderBrush="#374641"
+                                     FontFamily="Menlo"
+                                     FontSize="12"
+                                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                     Focusable="False"
+                                     IsTabStop="False"/>
+                        </DockPanel>
+                    </Border>
+                </Grid>
+            </Grid>
+        </ScrollViewer>
+
+        <Border Grid.Row="2" Background="#FFFEFA" BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Padding="20,10">
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                <Border Width="9" Height="9" CornerRadius="5" Background="{StaticResource ForestBright}" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="1" Text="{Binding Status}" Foreground="{StaticResource Ink}" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="2" Text="Digital Global Village · offline processing" Foreground="{StaticResource InkSoft}" FontSize="11" VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

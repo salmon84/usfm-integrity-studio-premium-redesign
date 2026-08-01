@@ -1,0 +1,37 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="UsfmIntegrityStudio.Views.StandardizeResultWindow"
+        Width="760"
+        Height="360"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        Title="Standardization Completed">
+
+    <Border Background="#F8FBFF" Padding="16">
+        <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" RowSpacing="10">
+            <TextBlock Text="Standardization Summary"
+                       FontSize="22"
+                       FontWeight="Bold"
+                       Foreground="#1E3A8A"/>
+
+            <TextBlock Grid.Row="1"
+                       x:Name="SummaryText"
+                       TextWrapping="Wrap"
+                       Foreground="#0F172A"/>
+
+            <TextBlock Grid.Row="2"
+                       Text="Choose which DOCX should be used as input for the next conversion run."
+                       Foreground="#334155"
+                       FontWeight="SemiBold"/>
+
+            <Border Grid.Row="3" BorderThickness="1" BorderBrush="#D6DEF4" Background="White" CornerRadius="8" Padding="10">
+                <TextBlock x:Name="PathText" TextWrapping="Wrap" Foreground="#1E293B"/>
+            </Border>
+
+            <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                <Button Content="Keep Original DOCX" Click="KeepOriginal_Click"/>
+                <Button Content="Use Standardized Copy" Click="UseStandardized_Click" Background="#2563EB" Foreground="White" BorderBrush="#1D4ED8"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

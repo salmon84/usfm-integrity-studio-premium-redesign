@@ -1,0 +1,15 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="UsfmIntegrityStudio.App"
+             xmlns:local="using:UsfmIntegrityStudio"
+             RequestedThemeVariant="Light">
+             <!-- Use Light to avoid low-contrast dark defaults for this workflow-heavy app. -->
+
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+
+    <Application.Styles>
+        <FluentTheme />
+    </Application.Styles>
+</Application>

@@ -1,0 +1,9 @@
+* text=auto
+*.cs text eol=lf
+*.axaml text eol=lf
+*.csproj text eol=lf
+*.manifest text eol=lf
+*.md text eol=lf
+*.command text eol=lf
+*.png binary
+*.ico binary

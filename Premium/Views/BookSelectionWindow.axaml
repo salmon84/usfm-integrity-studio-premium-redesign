@@ -1,0 +1,49 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:models="using:UsfmIntegrityStudio.Models"
+        x:Class="UsfmIntegrityStudio.Views.BookSelectionWindow"
+        x:CompileBindings="False"
+        Width="760"
+        Height="560"
+        Title="Select Books for USFM Conversion"
+        CanResize="True"
+        WindowStartupLocation="CenterOwner">
+
+    <Border Background="#F8FBFF" Padding="14">
+        <Grid RowDefinitions="Auto,Auto,*,Auto" RowSpacing="10">
+            <TextBlock x:Name="HeadingText"
+                       Text="Select the book(s) to convert to USFM"
+                       FontSize="20"
+                       FontWeight="Bold"/>
+
+            <Border Grid.Row="1" Background="#FFF7E8" BorderBrush="#F2C779" BorderThickness="1" CornerRadius="8" Padding="10">
+                <TextBlock x:Name="RecommendationText"
+                           Text="Accuracy recommendation: convert one book at a time for best results."
+                           Foreground="#7A4B00"
+                           FontWeight="SemiBold"/>
+            </Border>
+
+            <Border Grid.Row="2" BorderBrush="#CFDDF5" BorderThickness="1" CornerRadius="8" Background="White" Padding="10">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="0,0,0,8">
+                        <Button Content="Select All" Click="SelectAll_Click"/>
+                        <Button Content="Clear" Click="ClearAll_Click"/>
+                    </StackPanel>
+
+                    <ListBox x:Name="BooksList" ItemsSource="{Binding}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="models:BookSelectionOption">
+                                <CheckBox IsChecked="{Binding IsSelected}" Content="{Binding DisplayName}" Margin="4"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
+            </Border>
+
+            <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                <Button Content="Cancel" Click="Cancel_Click"/>
+                <Button x:Name="ConfirmButton" Content="Convert Selected" Click="Confirm_Click"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>
