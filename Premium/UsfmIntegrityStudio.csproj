@@ -4,7 +4,22 @@
     <AssemblyName>UISPremiumRedesign</AssemblyName>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <NuGetAudit>false</NuGetAudit>
+    <Version>0.1.0</Version>
+    <SourceRevisionId Condition="'$(SourceRevisionId)' == ''">development</SourceRevisionId>
+    <BuildChannel Condition="'$(BuildChannel)' == ''">development</BuildChannel>
+    <OfficialBuild Condition="'$(OfficialBuild)' == ''">false</OfficialBuild>
+    <InformationalVersion>$(Version)+$(SourceRevisionId)</InformationalVersion>
+    <Authors>Digital Global Village</Authors>
+    <Copyright>Copyright (C) 2026 Digital Global Village</Copyright>
+    <RepositoryUrl>https://github.com/salmon84/usfm-integrity-studio-premium-redesign</RepositoryUrl>
+    <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
+    <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
+    <Deterministic>true</Deterministic>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+    <NuGetAudit>true</NuGetAudit>
+    <NuGetAuditMode>all</NuGetAuditMode>
+    <NuGetAuditLevel>moderate</NuGetAuditLevel>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
@@ -13,6 +28,11 @@
     <Folder Include="Models\" />
     <Compile Include="..\Shared\ScripturePunctuationNormalizer.cs" Link="Shared\ScripturePunctuationNormalizer.cs" />
     <AvaloniaResource Include="Assets\**" />
+    <AssemblyMetadata Include="RepositoryUrl" Value="$(RepositoryUrl)" />
+    <AssemblyMetadata Include="SourceRevisionId" Value="$(SourceRevisionId)" />
+    <AssemblyMetadata Include="BuildChannel" Value="$(BuildChannel)" />
+    <AssemblyMetadata Include="OfficialBuild" Value="$(OfficialBuild)" />
+    <AssemblyMetadata Include="PrivacyMode" Value="Offline; no application telemetry" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,5 +46,7 @@
       <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
+    <!-- Pin the patched 0.21 line required by GHSA-xrw6-gwf8-vvr9. -->
+    <PackageReference Include="Tmds.DBus.Protocol" Version="0.21.3" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,56 @@
+name: Build and regression checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore locked dependencies
+        run: dotnet restore Premium/UsfmIntegrityStudio.csproj --locked-mode
+
+      - name: Audit vulnerable dependencies
+        run: dotnet list Premium/UsfmIntegrityStudio.csproj package --vulnerable --include-transitive --no-restore
+
+      - name: Build
+        run: dotnet build Premium/UsfmIntegrityStudio.csproj --configuration Release --no-restore
+
+      - name: Run regression suite
+        run: dotnet run --project Tests/PunctuationRegressionTests/PunctuationRegressionTests.csproj --configuration Release
+
+      - name: Reject private or generated formats
+        shell: bash
+        run: |
+          if git ls-files | grep -E '\.(docx|tstudio|usfm|dmg|pfx|p12|pem|key)$|(^|/)(bin|obj|publish|dist)/'; then
+            echo "Private, generated, or release-only files are tracked."
+            exit 1
+          fi
+
+      - name: Reject personal path signatures
+        shell: bash
+        run: |
+          if git grep -n -E '(/Users/|Library/CloudStorage|OneDrive|WorkInEurasia|Documents/New project)' -- 'Premium/**' 'Shared/**' ':!Premium/Assets/*'; then
+            echo "A personal filesystem signature is present."
+            exit 1
+          fi

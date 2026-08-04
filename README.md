@@ -28,6 +28,8 @@ explicitly covered by regression tests.
   references, and duplicate verse coverage.
 - Process files locally; the UIS application itself does not require a server
   login.
+- Display version, source revision, build channel, repository, license, and
+  offline privacy status through **About & Verify**.
 
 ## Repository layout
 
@@ -100,3 +102,14 @@ Source code is licensed under `AGPL-3.0-or-later`; see `LICENSE` and
 The code license does not grant trademark rights. See
 `Premium/TRADEMARK_POLICY.md` for the branding terms applying to the Digital
 Global Village and USFM Integrity Studio names and logo.
+
+Additional governance and assurance documents:
+
+- `COPYRIGHT.md`: ownership scope and BTT-Writer-derived-data provenance.
+- `THIRD_PARTY_NOTICES.md`: direct and transitive dependency notices.
+- `PRIVACY.md`: offline processing and network behavior.
+- `SECURITY.md`: private vulnerability reporting.
+- `CONTRIBUTING.md`: testing, private-data restrictions, and DCO sign-off.
+- `OFFICIAL_RELEASES.md`: official-build identity and release verification.
+- `LEGAL_AND_RELEASE_AUDIT.md`: implemented controls and residual owner actions.
+- `CHANGELOG.md`: versioned public change history.

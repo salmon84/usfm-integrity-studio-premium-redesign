@@ -4,10 +4,17 @@ Copyright (c) 2026 Digital Global Village
 This repository is released as Premium Edition under AGPL-3.0-or-later.
 See LICENSE for full terms.
 
+BTT-Writer compatibility notice:
+Canonical chunk-boundary data was generated from BTT-Writer Desktop 1.6
+build 1073. BTT-Writer Desktop is Copyright (C) 2019 Wycliffe Associates
+and is distributed under GPL-2.0-or-later. No endorsement is implied.
+See ../COPYRIGHT.md and ../THIRD_PARTY_NOTICES.md for provenance details.
+
 Trademark notice:
 "Digital Global Village" and "USFM Integrity Studio" names/logos are brand assets.
 This license does not grant trademark rights for branding, endorsement, or product naming.
 
 Commercial licensing:
 Separate commercial licensing terms may be available from Digital Global Village
-for proprietary/premium distributions.
+for original UIS material. Third-party and contributor rights remain subject to
+their applicable licenses and agreements.

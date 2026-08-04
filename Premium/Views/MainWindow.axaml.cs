@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -31,22 +32,155 @@ public partial class MainWindow : Window
 
     private MainWindowViewModel Vm => (MainWindowViewModel)DataContext!;
     private const string CompanyWebsiteUrl = "https://digitalglobalvillage.com/";
+    private const string RepositoryUrl = "https://github.com/salmon84/usfm-integrity-studio-premium-redesign";
+    private const string LicenseUrl = RepositoryUrl + "/blob/main/LICENSE";
 
     private void OpenWebsite_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        OpenExternalUrl(CompanyWebsiteUrl, "website");
+    }
+
+    private void OpenExternalUrl(string url, string label)
     {
         try
         {
             Process.Start(new ProcessStartInfo
             {
-                FileName = CompanyWebsiteUrl,
+                FileName = url,
                 UseShellExecute = true
             });
         }
         catch (Exception ex)
         {
-            Vm.Status = $"Unable to open website link: {ex.Message}";
-            Vm.Issues.Add(new IssueItem("Warning", "WEBSITE_OPEN_FAILED", ex.Message, Vm.Issues.Count + 1, "UI"));
+            Vm.Status = $"Unable to open {label} link: {ex.Message}";
+            Vm.Issues.Add(new IssueItem("Warning", "EXTERNAL_LINK_OPEN_FAILED", ex.Message, Vm.Issues.Count + 1, "UI"));
         }
+    }
+
+    private async void ShowAbout_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        var assembly = typeof(MainWindow).Assembly;
+        var informationalVersion = assembly
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
+            .InformationalVersion ?? assembly.GetName().Version?.ToString() ?? "unknown";
+        var metadata = assembly
+            .GetCustomAttributes<AssemblyMetadataAttribute>()
+            .GroupBy(item => item.Key, StringComparer.Ordinal)
+            .ToDictionary(group => group.Key, group => group.Last().Value ?? string.Empty, StringComparer.Ordinal);
+
+        var revision = GetBuildMetadata(metadata, "SourceRevisionId", "unknown");
+        var channel = GetBuildMetadata(metadata, "BuildChannel", "development");
+        var official = string.Equals(
+            GetBuildMetadata(metadata, "OfficialBuild", "false"),
+            "true",
+            StringComparison.OrdinalIgnoreCase);
+        var buildStatus = official && string.Equals(channel, "official", StringComparison.OrdinalIgnoreCase)
+            ? "Official metadata present. Verify the package signature and published SHA-256 checksum."
+            : "Development/community build. It is not an official release package.";
+
+        var dialog = new Window
+        {
+            Title = "About & Verify",
+            Width = 720,
+            Height = 650,
+            MinWidth = 620,
+            MinHeight = 540,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            CanResize = true
+        };
+
+        var details = new Grid
+        {
+            ColumnDefinitions = new ColumnDefinitions("145,*"),
+            RowDefinitions = new RowDefinitions("Auto,Auto,Auto,Auto,Auto,Auto,Auto"),
+            ColumnSpacing = 14,
+            RowSpacing = 9
+        };
+        AddConfirmationRow(details, 0, "Product", "USFM Integrity Studio Premium Redesign");
+        AddConfirmationRow(details, 1, "Version", informationalVersion);
+        AddConfirmationRow(details, 2, "Source revision", revision);
+        AddConfirmationRow(details, 3, "Build channel", channel);
+        AddConfirmationRow(details, 4, "Official metadata", official ? "Yes" : "No");
+        AddConfirmationRow(details, 5, "License", "AGPL-3.0-or-later");
+        AddConfirmationRow(details, 6, "Privacy", "Offline processing; no application telemetry");
+
+        var buttons = new StackPanel
+        {
+            Orientation = Orientation.Horizontal,
+            HorizontalAlignment = HorizontalAlignment.Right,
+            Spacing = 10
+        };
+        var sourceButton = new Button { Content = "Open Source", MinWidth = 110 };
+        sourceButton.Click += (_, _) => OpenExternalUrl(RepositoryUrl, "source repository");
+        var licenseButton = new Button { Content = "View License", MinWidth = 110 };
+        licenseButton.Click += (_, _) => OpenExternalUrl(LicenseUrl, "license");
+        var closeButton = new Button { Content = "Close", MinWidth = 100 };
+        closeButton.Click += (_, _) => dialog.Close();
+        buttons.Children.Add(sourceButton);
+        buttons.Children.Add(licenseButton);
+        buttons.Children.Add(closeButton);
+
+        dialog.Content = new ScrollViewer
+        {
+            Content = new StackPanel
+            {
+                Margin = new Avalonia.Thickness(24),
+                Spacing = 14,
+                Children =
+                {
+                    new TextBlock
+                    {
+                        Text = "About & Verify",
+                        FontSize = 26,
+                        FontWeight = Avalonia.Media.FontWeight.Bold
+                    },
+                    new TextBlock
+                    {
+                        Text = buildStatus,
+                        TextWrapping = Avalonia.Media.TextWrapping.Wrap,
+                        FontWeight = Avalonia.Media.FontWeight.SemiBold
+                    },
+                    new Border
+                    {
+                        Padding = new Avalonia.Thickness(16),
+                        CornerRadius = new Avalonia.CornerRadius(10),
+                        BorderThickness = new Avalonia.Thickness(1),
+                        BorderBrush = Avalonia.Media.Brushes.SlateGray,
+                        Child = details
+                    },
+                    new TextBlock
+                    {
+                        Text = RepositoryUrl,
+                        TextWrapping = Avalonia.Media.TextWrapping.Wrap,
+                        FontFamily = Avalonia.Media.FontFamily.Parse("Menlo, monospace")
+                    },
+                    new TextBlock
+                    {
+                        Text = "This application does not send scripture content, project paths, machine identifiers, analytics, or crash reports. External links open only after a user clicks them.",
+                        TextWrapping = Avalonia.Media.TextWrapping.Wrap
+                    },
+                    new TextBlock
+                    {
+                        Text = "Build metadata can be copied by a modified build. Only a valid platform signature and checksum matching the official GitHub release establish package provenance.",
+                        TextWrapping = Avalonia.Media.TextWrapping.Wrap,
+                        FontStyle = Avalonia.Media.FontStyle.Italic
+                    },
+                    buttons
+                }
+            }
+        };
+
+        await dialog.ShowDialog(this);
+    }
+
+    private static string GetBuildMetadata(
+        IReadOnlyDictionary<string, string> metadata,
+        string key,
+        string fallback)
+    {
+        return metadata.TryGetValue(key, out var value) && !string.IsNullOrWhiteSpace(value)
+            ? value
+            : fallback;
     }
 
     private async void BrowseDocx_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

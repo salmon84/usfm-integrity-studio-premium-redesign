@@ -1,0 +1,20 @@
+# Changelog
+
+All notable changes to this project will be documented here.
+
+## Unreleased
+
+### Added
+
+- Transparent **About & Verify** build identity and privacy information.
+- AGPL, BTT-Writer provenance, third-party, privacy, security, contribution,
+  trademark, and official-release policies.
+- Locked NuGet dependency graph, advisory auditing, CI, Dependabot, and
+  CODEOWNERS.
+- GitHub branch protection and private vulnerability reporting.
+
+### Security
+
+- Pinned `Tmds.DBus.Protocol` to patched version 0.21.3 for
+  GHSA-xrw6-gwf8-vvr9.
+- Removed the Avalonia default application icon from UIS branding.

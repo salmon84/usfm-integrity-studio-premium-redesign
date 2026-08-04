@@ -1,4 +1,5 @@
 using System.IO.Compression;
+using System.Reflection;
 using System.Text;
 using UsfmIntegrityStudio.Models;
 using UsfmTools.Text;
@@ -32,6 +33,19 @@ var cases = new (string Name, string Input, string Expected)[]
 };
 
 var failures = new List<string>();
+var appAssembly = typeof(UsfmProjectCleanerService).Assembly;
+var appMetadata = appAssembly
+    .GetCustomAttributes<AssemblyMetadataAttribute>()
+    .GroupBy(item => item.Key, StringComparer.Ordinal)
+    .ToDictionary(group => group.Key, group => group.Last().Value ?? string.Empty, StringComparer.Ordinal);
+AssertMetadata(appMetadata, "RepositoryUrl", "https://github.com/salmon84/usfm-integrity-studio-premium-redesign", failures);
+AssertMetadataPresent(appMetadata, "SourceRevisionId", failures);
+AssertMetadataPresent(appMetadata, "BuildChannel", failures);
+AssertMetadataPresent(appMetadata, "OfficialBuild", failures);
+AssertExpectedMetadataFromEnvironment(appMetadata, "SourceRevisionId", "UIS_EXPECT_REVISION", failures);
+AssertExpectedMetadataFromEnvironment(appMetadata, "BuildChannel", "UIS_EXPECT_CHANNEL", failures);
+AssertExpectedMetadataFromEnvironment(appMetadata, "OfficialBuild", "UIS_EXPECT_OFFICIAL", failures);
+
 foreach (var test in cases)
 {
     var actual = ScripturePunctuationNormalizer.NormalizeArabicDerivedSpacing(test.Input);
@@ -340,7 +354,43 @@ if (failures.Count > 0)
 }
 
 Console.WriteLine(
-    $"Regression tests passed: {cases.Length} punctuation cases, quote-cleaning .tstudio, canonical BTTW packaging, partial-chunk mapping, warning-only extra chunk splits, and non-destructive duplicate blocking.");
+    $"Regression tests passed: build identity metadata, {cases.Length} punctuation cases, quote-cleaning .tstudio, canonical BTTW packaging, partial-chunk mapping, warning-only extra chunk splits, and non-destructive duplicate blocking.");
+
+static void AssertMetadata(
+    IReadOnlyDictionary<string, string> metadata,
+    string key,
+    string expected,
+    ICollection<string> failures)
+{
+    if (!metadata.TryGetValue(key, out var actual) || !string.Equals(actual, expected, StringComparison.Ordinal))
+    {
+        failures.Add($"build identity: expected {key} [{expected}] but got [{actual ?? "missing"}]");
+    }
+}
+
+static void AssertMetadataPresent(
+    IReadOnlyDictionary<string, string> metadata,
+    string key,
+    ICollection<string> failures)
+{
+    if (!metadata.TryGetValue(key, out var value) || string.IsNullOrWhiteSpace(value))
+    {
+        failures.Add($"build identity: missing {key}");
+    }
+}
+
+static void AssertExpectedMetadataFromEnvironment(
+    IReadOnlyDictionary<string, string> metadata,
+    string metadataKey,
+    string environmentKey,
+    ICollection<string> failures)
+{
+    var expected = Environment.GetEnvironmentVariable(environmentKey);
+    if (!string.IsNullOrWhiteSpace(expected))
+    {
+        AssertMetadata(metadata, metadataKey, expected, failures);
+    }
+}
 
 static void AssertEntryExists(ZipArchive archive, string entryName, ICollection<string> failures)
 {
