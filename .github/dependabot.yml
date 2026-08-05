@@ -13,6 +13,13 @@ updates:
         patterns:
           - Avalonia
           - Avalonia.*
+        update-types:
+          - minor
+          - patch
+    ignore:
+      - dependency-name: Avalonia*
+        update-types:
+          - version-update:semver-major
     labels:
       - dependencies
       - security
