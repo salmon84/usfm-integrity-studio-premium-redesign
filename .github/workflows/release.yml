@@ -60,7 +60,7 @@ jobs:
         run: |
           version="${{ needs.verify.outputs.version }}"
           packaging/macos/build-dmg.sh "${{ matrix.rid }}" "$version" "$GITHUB_SHA"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: macos-${{ matrix.rid }}
           path: |
@@ -107,7 +107,7 @@ jobs:
           }
           & $iscc "/DMyAppVersion=$version" "/DSourceDir=$publish" `
             "/DOutputDir=$pwd" packaging/windows/UISPremium.iss
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: windows-x64
           path: |
@@ -174,7 +174,7 @@ jobs:
           EOF
           dpkg-deb --build --root-owner-group "$root" \
             "USFM-Integrity-Studio-Premium-$version-linux-x64.deb"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: linux-x64
           path: |
