@@ -1,0 +1,229 @@
+name: Build and publish release packages
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version to validate without publishing
+        required: true
+        default: 0.1.0
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Verify release version
+        id: version
+        shell: bash
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            version="${GITHUB_REF_NAME#v}"
+          else
+            version="${{ inputs.version }}"
+          fi
+          project_version=$(sed -n 's:.*<Version>\([^<]*\)</Version>.*:\1:p' Premium/UsfmIntegrityStudio.csproj)
+          test "$version" = "$project_version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - run: dotnet restore Premium/UsfmIntegrityStudio.csproj --locked-mode
+      - run: dotnet list Premium/UsfmIntegrityStudio.csproj package --vulnerable --include-transitive --no-restore
+      - run: dotnet build Premium/UsfmIntegrityStudio.csproj --configuration Release --no-restore
+      - run: dotnet run --project Tests/PunctuationRegressionTests/PunctuationRegressionTests.csproj --configuration Release
+
+  macos:
+    needs: verify
+    runs-on: macos-14
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        rid: [osx-arm64, osx-x64]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Build DMG and app archive
+        shell: bash
+        run: |
+          version="${{ needs.verify.outputs.version }}"
+          packaging/macos/build-dmg.sh "${{ matrix.rid }}" "$version" "$GITHUB_SHA"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-${{ matrix.rid }}
+          path: |
+            Premium/dist/*.dmg
+            Premium/dist/*.app.zip
+          if-no-files-found: error
+
+  windows:
+    needs: verify
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Publish Windows x64
+        shell: pwsh
+        run: |
+          $version = "${{ needs.verify.outputs.version }}"
+          $publish = Join-Path $env:RUNNER_TEMP "uis-win-x64"
+          dotnet publish Premium/UsfmIntegrityStudio.csproj `
+            --configuration Release --runtime win-x64 --self-contained true `
+            --output $publish -p:PublishSingleFile=false -p:PublishTrimmed=false `
+            -p:RestoreLockedMode=true -p:DebugType=None -p:DebugSymbols=false -p:Version=$version `
+            -p:SourceRevisionId=$env:GITHUB_SHA -p:BuildChannel=official `
+            -p:OfficialBuild=true
+          New-Item -ItemType Directory -Force (Join-Path $publish "legal") | Out-Null
+          Copy-Item LICENSE (Join-Path $publish "legal/LICENSE.txt")
+          Copy-Item COPYRIGHT.md,PRIVACY.md,THIRD_PARTY_NOTICES.md (Join-Path $publish "legal")
+          Copy-Item Premium/NOTICE (Join-Path $publish "legal/NOTICE.txt")
+          Copy-Item Premium/TRADEMARK_POLICY.md (Join-Path $publish "legal")
+          Copy-Item Premium/packages.lock.json (Join-Path $publish "legal/DEPENDENCIES.lock.json")
+          Compress-Archive -Path "$publish/*" `
+            -DestinationPath "USFM-Integrity-Studio-Premium-$version-windows-x64-portable.zip"
+      - name: Build Windows installer
+        shell: pwsh
+        run: |
+          $version = "${{ needs.verify.outputs.version }}"
+          $publish = Join-Path $env:RUNNER_TEMP "uis-win-x64"
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) {
+            choco install innosetup --no-progress -y
+          }
+          & $iscc "/DMyAppVersion=$version" "/DSourceDir=$publish" `
+            "/DOutputDir=$pwd" packaging/windows/UISPremium.iss
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-x64
+          path: |
+            *-windows-x64-setup.exe
+            *-windows-x64-portable.zip
+          if-no-files-found: error
+
+  linux:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Publish Linux x64
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="${{ needs.verify.outputs.version }}"
+          publish="$RUNNER_TEMP/uis-linux-x64"
+          dotnet publish Premium/UsfmIntegrityStudio.csproj \
+            --configuration Release --runtime linux-x64 --self-contained true \
+            --output "$publish" -p:PublishSingleFile=false -p:PublishTrimmed=false \
+            -p:RestoreLockedMode=true -p:DebugType=None -p:DebugSymbols=false -p:Version="$version" \
+            -p:SourceRevisionId="$GITHUB_SHA" -p:BuildChannel=official \
+            -p:OfficialBuild=true
+          mkdir -p "$publish/legal"
+          cp LICENSE "$publish/legal/LICENSE.txt"
+          cp COPYRIGHT.md PRIVACY.md THIRD_PARTY_NOTICES.md "$publish/legal/"
+          cp Premium/NOTICE "$publish/legal/NOTICE.txt"
+          cp Premium/TRADEMARK_POLICY.md "$publish/legal/"
+          cp Premium/packages.lock.json "$publish/legal/DEPENDENCIES.lock.json"
+          tar -czf "USFM-Integrity-Studio-Premium-$version-linux-x64.tar.gz" -C "$publish" .
+      - name: Build Debian package
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="${{ needs.verify.outputs.version }}"
+          root="$RUNNER_TEMP/deb-root"
+          install="$root/opt/uis-premium"
+          mkdir -p "$install" "$root/DEBIAN" "$root/usr/bin" \
+            "$root/usr/share/applications" "$root/usr/share/icons/hicolor/1024x1024/apps"
+          cp -a "$RUNNER_TEMP/uis-linux-x64/." "$install/"
+          ln -s /opt/uis-premium/UISPremiumRedesign "$root/usr/bin/uis-premium"
+          cp packaging/linux/uis-premium.desktop "$root/usr/share/applications/"
+          cp Premium/Assets/dgv-logo.png \
+            "$root/usr/share/icons/hicolor/1024x1024/apps/uis-premium.png"
+          installed_size=$(du -sk "$root" | cut -f1)
+          cat > "$root/DEBIAN/control" <<EOF
+          Package: uis-premium
+          Version: $version
+          Section: text
+          Priority: optional
+          Architecture: amd64
+          Installed-Size: $installed_size
+          Depends: libx11-6, libxrandr2, libxi6, libice6, libsm6, libfontconfig1
+          Maintainer: Digital Global Village <33775442+salmon84@users.noreply.github.com>
+          Homepage: https://github.com/salmon84/usfm-integrity-studio-premium-redesign
+          Description: Offline scripture conversion and repair workspace
+           Scan and standardize DOCX scripture, produce USFM and BTTW project
+           packages, and clean existing USFM or BTTW project files.
+          EOF
+          dpkg-deb --build --root-owner-group "$root" \
+            "USFM-Integrity-Studio-Premium-$version-linux-x64.deb"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-x64
+          path: |
+            *.deb
+            *.tar.gz
+          if-no-files-found: error
+
+  release:
+    needs: [macos, windows, linux]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: "*"
+          path: release-assets
+          merge-multiple: true
+      - name: Add release evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp Premium/packages.lock.json release-assets/DEPENDENCIES.lock.json
+          (
+            cd release-assets
+            find . -maxdepth 1 -type f ! -name SHA256SUMS.txt -print0 \
+              | sort -z | xargs -0 sha256sum > SHA256SUMS.txt
+          )
+          cat > release-notes.md <<EOF
+          ## USFM Integrity Studio Premium ${GITHUB_REF_NAME}
+
+          Official cross-platform packages built from commit \`${GITHUB_SHA}\`.
+
+          - macOS: Apple Silicon and Intel DMGs, plus zipped app bundles
+          - Windows: x64 installer and portable archive
+          - Linux: x64 Debian package and portable archive
+
+          Verify downloads with \`SHA256SUMS.txt\`. These initial packages are
+          not Apple-notarized or signed with a Windows publisher certificate, so
+          the operating system may display an unknown-developer warning.
+          EOF
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          gh release create "$GITHUB_REF_NAME" release-assets/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "USFM Integrity Studio Premium $GITHUB_REF_NAME" \
+            --notes-file release-notes.md \
+            --verify-tag

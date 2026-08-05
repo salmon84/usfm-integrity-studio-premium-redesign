@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented here.
 
-## Unreleased
+## 0.1.0 - 2026-08-05
 
 ### Added
 
@@ -18,3 +18,11 @@ All notable changes to this project will be documented here.
 - Pinned `Tmds.DBus.Protocol` to patched version 0.21.3 for
   GHSA-xrw6-gwf8-vvr9.
 - Removed the Avalonia default application icon from UIS branding.
+
+### Distribution
+
+- Added reproducible macOS Apple Silicon/Intel, Windows x64, and Linux x64
+  release packaging with official source-revision metadata.
+- Added SHA-256 checksums, dependency-lock evidence, and legal notices to the
+  release packages.
+- Documented that initial packages are unsigned and not Apple-notarized.

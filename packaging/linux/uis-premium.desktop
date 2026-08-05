@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=USFM Integrity Studio Premium
+Comment=Offline scripture conversion and repair workspace
+Exec=/usr/bin/uis-premium
+Icon=uis-premium
+Terminal=false
+Categories=Office;Utility;

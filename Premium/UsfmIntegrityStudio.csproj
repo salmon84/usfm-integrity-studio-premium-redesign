@@ -2,7 +2,11 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <AssemblyName>UISPremiumRedesign</AssemblyName>
+    <AssemblyTitle>USFM Integrity Studio Premium</AssemblyTitle>
+    <Product>USFM Integrity Studio Premium</Product>
+    <Description>Offline scripture conversion and repair workspace</Description>
     <TargetFramework>net10.0</TargetFramework>
+    <RuntimeIdentifiers>osx-arm64;osx-x64;win-x64;linux-x64</RuntimeIdentifiers>
     <Nullable>enable</Nullable>
     <Version>0.1.0</Version>
     <SourceRevisionId Condition="'$(SourceRevisionId)' == ''">development</SourceRevisionId>

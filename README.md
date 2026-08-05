@@ -68,6 +68,21 @@ DOTNET_CLI_TELEMETRY_OPTOUT=1 AVALONIA_TELEMETRY_OPTOUT=1 \
 The regression suite uses synthetic fixtures only. Do not add private
 translation projects or source texts to this repository.
 
+## Installable releases
+
+Official installable packages are published on the repository's GitHub
+Releases page for:
+
+- macOS Apple Silicon and Intel (`.dmg` and zipped `.app`);
+- Windows x64 (installer `.exe` and portable `.zip`); and
+- Linux x64 (Debian `.deb` and portable `.tar.gz`).
+
+Each release includes SHA-256 checksums and the locked dependency manifest.
+Initial packages are not Apple-notarized or signed with a Windows publisher
+certificate, so macOS Gatekeeper or Windows SmartScreen may display an
+unknown-developer warning. Verify the checksum and source revision shown in
+**About & Verify** before using a package.
+
 ## Optional source comparison
 
 Some context-aware quote cleanup can compare a project target with a local

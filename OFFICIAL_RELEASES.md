@@ -16,6 +16,11 @@ An official build must:
    `THIRD_PARTY_NOTICES.md`, `PRIVACY.md`, and `Premium/NOTICE`; and
 8. be code-signed when platform signing credentials are available.
 
+The tag-triggered release workflow builds native packages on GitHub-hosted
+macOS, Windows, and Linux runners. Packaging does not modify the scripture
+engine. Until Apple and Windows signing credentials are configured, release
+notes and the README must identify the packages as unsigned/not notarized.
+
 A label inside an executable is not cryptographic proof. Verify the package's
 signature and checksum against the official release page.
 
@@ -39,6 +44,12 @@ dotnet publish Premium/UsfmIntegrityStudio.csproj \
 
 The source revision must match the tagged commit. Release packages and
 checksums must be retained with the GitHub release.
+
+## Package formats
+
+- macOS Apple Silicon and Intel: `.dmg` and zipped `.app`
+- Windows x64: Inno Setup installer and portable `.zip`
+- Linux x64: Debian `.deb` and portable `.tar.gz`
 
 ## Monitoring
 
